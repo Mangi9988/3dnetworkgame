@@ -1371,6 +1371,7 @@ GameObject:
   - component: {fileID: 5423225189961359623}
   - component: {fileID: 3242020111561838823}
   - component: {fileID: 186195477738956352}
+  - component: {fileID: 6647441894120246893}
   - component: {fileID: 3320303978622041133}
   - component: {fileID: 5861232591691264944}
   - component: {fileID: 6663615779965610857}
@@ -1467,9 +1468,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Stat:
     MoveSpeed: 7
+    DashSpeed: 23.07
     JumpPower: 2.5
     RotationSpeed: 300
     AttackSpeed: 1.2
+    MaxStamina: 100
+    RecoverStaminaAmount: 20
 --- !u!114 &186195477738956352
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1487,6 +1491,25 @@ MonoBehaviour:
   Gravity: -15
   JumpTimeout: 0.5
   FallTimeout: 0.15
+--- !u!114 &6647441894120246893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4711410610792072087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c9f6051d5df01a4aaa32daf551b41ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DashStaminaCost: 50
+  JumpStaminaCost: 10
+  AttackStaminaCost: 20
+  MinDashStamina: 1
+  FatigueDuration: 2
+  _currentStamina: 0
+  IsUsingStamina: 0
 --- !u!114 &3320303978622041133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1545,7 +1568,6 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: 186195477738956352}
   - {fileID: 6465180008337008834}
   - {fileID: 4194161412754096974}
   sceneViewId: 0
@@ -1558,7 +1580,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4711410610792072087}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 

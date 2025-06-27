@@ -8,6 +8,11 @@ public class Player : MonoBehaviour
 
     private Dictionary<Type, PlayerAbility> _abilitiesCache;
 
+    private void Awake()
+    {
+        _abilitiesCache = new Dictionary<Type, PlayerAbility>();
+    }
+    
     public T GetAbility<T>() where T : PlayerAbility
     {
         var type = typeof(T);

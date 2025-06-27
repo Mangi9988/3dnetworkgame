@@ -1,7 +1,7 @@
 using Photon.Pun;
 using UnityEngine;
 
-public class PlayerMove : PlayerAbility, IPunObservable
+public class PlayerMove : PlayerAbility//, IPunObservable
 {
     private CharacterController _characterController;
     private Animator _animator;
@@ -25,6 +25,9 @@ public class PlayerMove : PlayerAbility, IPunObservable
     private float _fallTimeoutDelta;
     private bool _wasGrounded;
 
+    // private Vector3 _receivedPosition = Vector3.zero;
+    // private Quaternion _receievedRotaion = Quaternion.identity;
+    
     private void Start()
     {
         _characterController = GetComponent<CharacterController>();
@@ -39,7 +42,7 @@ public class PlayerMove : PlayerAbility, IPunObservable
     // 데이터 동기화를 위한 데이터 전송 및 수신 기능
     // stream : 서버에서 주고받을 데이터가 담겨있는 ㅂ녀수
     // info : 송수신 성공/실패 여부에 대한 로그
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    /*public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         // IsWriting과 IsReading은 IsMine검사를 알아서 해주기 때문에 굳이 조건에 필요 없음
         if (stream.IsWriting)
@@ -55,19 +58,18 @@ public class PlayerMove : PlayerAbility, IPunObservable
             // 내 데이터가 아닐때만 보내준다.
             // 데이터를 수신하는 상황 -> 받은 데이터를 세팅하면 된다.
             // 꼭 보내준 순서대로 받아야함. 아니면 에러
-            Vector3 recivedPosition = (Vector3)stream.ReceiveNext();
-            Quaternion recievedRotaion = (Quaternion)stream.ReceiveNext();
-            
-            transform.position = recivedPosition;
-            transform.rotation = recievedRotaion;   
-            
+            _receivedPosition = (Vector3)stream.ReceiveNext();
+            _receievedRotaion = (Quaternion)stream.ReceiveNext();
         }
-    }
+    }*/
     
     private void Update()
     {
         if (!_photonView.IsMine)
         {
+            // transform.position = Vector3.Lerp(transform.position, _receivedPosition, Time.deltaTime * 20f);
+            // transform.rotation = Quaternion.Lerp(transform.rotation, _receievedRotaion, Time.deltaTime * 20f);
+            
             return;
         }
         
@@ -88,21 +90,40 @@ public class PlayerMove : PlayerAbility, IPunObservable
             ? Mathf.MoveTowards(_smoothZ, rawZ, Time.deltaTime * SmoothSpeedUp)
             : Mathf.MoveTowards(_smoothZ, rawZ, Time.deltaTime * SmoothSpeedDown);
 
-        if (_animator != null)
+        if (_animator == null)
         {
-            _animator.SetFloat("MoveX", _smoothX);
-            _animator.SetFloat("MoveZ", _smoothZ);
-            _animator.SetBool("IsMove", Mathf.Abs(_smoothX) > 0f || Mathf.Abs(_smoothZ) > 0f);
+            return;
         }
-
-        if (_animator != null)
+        
+        _animator.SetFloat("MoveX", _smoothX);
+        _animator.SetFloat("MoveZ", _smoothZ); 
+        _animator.SetBool("IsMove", Mathf.Abs(_smoothX) > 0f || Mathf.Abs(_smoothZ) > 0f);
+        
+        AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
+        if (stateInfo.IsTag("Attack") || stateInfo.IsTag("Skill"))
         {
-            AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-            if (stateInfo.IsTag("Attack") || stateInfo.IsTag("Skill"))
-                return;
+            return;
         }
+        
+        bool isRunning = InputHandler.GetKey(KeyCode.LeftShift);
+        float targetSpeed = 0f;
 
-        float targetSpeed = (rawX == 0f && rawZ == 0f) ? 0f : _owner.Stat.MoveSpeed;
+        if (rawX != 0f || rawZ != 0f)
+        {
+            var stamina = _owner.GetAbility<PlayerStemina>();
+
+            if (isRunning && stamina.UseDashStamina())
+            {
+                // 대시 성공
+                targetSpeed = _owner.Stat.DashSpeed;
+            }
+            else
+            {
+                // 대시 실패(피로/체력부족) 또는 Shift 미누름 → 일반 보행
+                stamina.IsUsingStamina = false;
+                targetSpeed = _owner.Stat.MoveSpeed;
+            }
+        }
 
         Vector3 inputDir = new Vector3(rawX, 0f, rawZ).normalized;
         if (inputDir != Vector3.zero)
@@ -120,14 +141,12 @@ public class PlayerMove : PlayerAbility, IPunObservable
         {
             _characterController.Move(move);
         }
-
-        if (_animator != null)
-        {
-            Vector3 horizontalMove = new Vector3(_characterController.velocity.x, 0f, _characterController.velocity.z);
-            float normalizedSpeed = Mathf.Clamp01(horizontalMove.magnitude / (_owner.Stat.MoveSpeed > 0f ? _owner.Stat.MoveSpeed : 1f));
-            float animatedSpeed = Mathf.Lerp(0.3f, 1.4f, normalizedSpeed);
-            _animator.SetFloat("Speed", animatedSpeed);
-        }
+        
+        Vector3 horizontalMove = new Vector3(_characterController.velocity.x, 0f, _characterController.velocity.z);
+        float normalizedSpeed = Mathf.Clamp01(horizontalMove.magnitude / (_owner.Stat.MoveSpeed > 0f ? _owner.Stat.MoveSpeed : 1f));
+        float animatedSpeed = Mathf.Lerp(0.3f, 1.4f, normalizedSpeed);
+        _animator.SetFloat("Speed", animatedSpeed);
+        
     }
 
     private void JumpAndGravity()
