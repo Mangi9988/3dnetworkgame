@@ -1,22 +1,20 @@
+using Photon.Pun;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-public class PlayerMove : MonoBehaviour
+public class PlayerMove : PlayerAbility, IPunObservable
 {
     private CharacterController _characterController;
     private Animator _animator;
     private Camera _mainCamera;
     private Transform _cameraTarget;
-
+    
     [Header("Movement")]
-    [SerializeField] private float _moveSpeed = 5f;
     [SerializeField] private float SmoothSpeedUp = 15f;
     [SerializeField] private float SmoothSpeedDown = 5f;
     private float _smoothX = 0f;
     private float _smoothZ = 0f;
 
     [Header("Jump")]
-    public float JumpHeight = 1.2f;
     public float Gravity = -15.0f;
     public float JumpTimeout = 0.5f;
     public float FallTimeout = 0.15f;
@@ -27,30 +25,60 @@ public class PlayerMove : MonoBehaviour
     private float _fallTimeoutDelta;
     private bool _wasGrounded;
 
-    private void Awake()
+    private void Start()
     {
         _characterController = GetComponent<CharacterController>();
         _animator = GetComponentInChildren<Animator>();
         _mainCamera = Camera.main;
-    }
-
-    private void Start()
-    {
+        
         _jumpTimeoutDelta = JumpTimeout;
         _fallTimeoutDelta = FallTimeout;
         _wasGrounded = _characterController.isGrounded;
     }
 
+    // 데이터 동기화를 위한 데이터 전송 및 수신 기능
+    // stream : 서버에서 주고받을 데이터가 담겨있는 ㅂ녀수
+    // info : 송수신 성공/실패 여부에 대한 로그
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        // IsWriting과 IsReading은 IsMine검사를 알아서 해주기 때문에 굳이 조건에 필요 없음
+        if (stream.IsWriting)
+        {   
+            // 나의 데이터만 보내준다.
+            // 데이터를 전송하는 상황 -> 데이터를 보내주면 되고,
+            stream.SendNext(transform.position);
+            stream.SendNext(transform.rotation);   
+
+        }
+        else if(stream.IsReading)
+        {
+            // 내 데이터가 아닐때만 보내준다.
+            // 데이터를 수신하는 상황 -> 받은 데이터를 세팅하면 된다.
+            // 꼭 보내준 순서대로 받아야함. 아니면 에러
+            Vector3 recivedPosition = (Vector3)stream.ReceiveNext();
+            Quaternion recievedRotaion = (Quaternion)stream.ReceiveNext();
+            
+            transform.position = recivedPosition;
+            transform.rotation = recievedRotaion;   
+            
+        }
+    }
+    
     private void Update()
     {
+        if (!_photonView.IsMine)
+        {
+            return;
+        }
+        
         JumpAndGravity();
         HandlePlayerMove();
     }
 
     private void HandlePlayerMove()
     {
-        float rawX = Input.GetAxisRaw("Horizontal");
-        float rawZ = Input.GetAxisRaw("Vertical");
+        float rawX = InputHandler.GetAxisRaw("Horizontal");
+        float rawZ = InputHandler.GetAxisRaw("Vertical");
 
         _smoothX = (rawX > _smoothX)
             ? Mathf.MoveTowards(_smoothX, rawX, Time.deltaTime * SmoothSpeedUp)
@@ -74,7 +102,7 @@ public class PlayerMove : MonoBehaviour
                 return;
         }
 
-        float targetSpeed = (rawX == 0f && rawZ == 0f) ? 0f : _moveSpeed;
+        float targetSpeed = (rawX == 0f && rawZ == 0f) ? 0f : _owner.Stat.MoveSpeed;
 
         Vector3 inputDir = new Vector3(rawX, 0f, rawZ).normalized;
         if (inputDir != Vector3.zero)
@@ -96,7 +124,7 @@ public class PlayerMove : MonoBehaviour
         if (_animator != null)
         {
             Vector3 horizontalMove = new Vector3(_characterController.velocity.x, 0f, _characterController.velocity.z);
-            float normalizedSpeed = Mathf.Clamp01(horizontalMove.magnitude / (_moveSpeed > 0f ? _moveSpeed : 1f));
+            float normalizedSpeed = Mathf.Clamp01(horizontalMove.magnitude / (_owner.Stat.MoveSpeed > 0f ? _owner.Stat.MoveSpeed : 1f));
             float animatedSpeed = Mathf.Lerp(0.3f, 1.4f, normalizedSpeed);
             _animator.SetFloat("Speed", animatedSpeed);
         }
@@ -124,9 +152,9 @@ public class PlayerMove : MonoBehaviour
                 _verticalVelocity = -2f;
             }
 
-            if (Input.GetKeyDown(KeyCode.Space) && _jumpTimeoutDelta <= 0.0f)
+            if (InputHandler.GetKeyDown(KeyCode.Space) && _jumpTimeoutDelta <= 0.0f)
             {
-                _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+                _verticalVelocity = Mathf.Sqrt(_owner.Stat.JumpPower * -2f * Gravity);
                 _jumpTimeoutDelta = JumpTimeout;
                 _animator.SetBool("Jump", true);
             }

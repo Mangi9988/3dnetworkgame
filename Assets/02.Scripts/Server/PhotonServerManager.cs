@@ -4,6 +4,7 @@ using UnityEngine;
 // Photon ApI 네임 스페이스
 using Photon.Pun;
 using Photon.Realtime;
+using Player = Photon.Realtime.Player;
 
 // 역할 :포톤 서버 관리자 (서버 연결, 로비 입장, 방 입장, 게임 입장 )
 public class PhotonServerManager : MonoBehaviourPunCallbacks
@@ -15,6 +16,9 @@ public class PhotonServerManager : MonoBehaviourPunCallbacks
     private void Start()
     {
         // 설정
+        // 00. 데이터 송수신 빈도를 매 초당 30회로 설정한다. (기본은 10)
+        PhotonNetwork.SendRate = 60;                // 선호한ㄴ 값이지 보장은 안함
+        PhotonNetwork.SerializationRate = 60;
         // 1. 버전 : 버전이 다르면 다른 서버로 접속이 된다.
         PhotonNetwork.GameVersion = _gameVersion;
         // 2. 닉네임 : 게임에서 사용할 사용자의 별명(중복 가능 -> 판별을 위해서는 ActorID)
@@ -62,8 +66,8 @@ public class PhotonServerManager : MonoBehaviourPunCallbacks
         Debug.Log($"플레이어 : {PhotonNetwork.CurrentRoom.PlayerCount}명");
         
         // Room(방)에 접속한 사용자 정보
-        Dictionary<int, Player> roomPlayers = PhotonNetwork.CurrentRoom.Players;
-        foreach (KeyValuePair<int, Player> player in roomPlayers)
+        Dictionary<int, Photon.Realtime.Player> roomPlayers = PhotonNetwork.CurrentRoom.Players;
+        foreach (KeyValuePair<int, Photon.Realtime.Player> player in roomPlayers)
         {
             Debug.Log($"{player.Value.NickName} : {player.Value.ActorNumber}");
             // ActorNumver는 Room 안에서의 플레이어에 대한 판별 ID
@@ -71,6 +75,10 @@ public class PhotonServerManager : MonoBehaviourPunCallbacks
             // 진짜 고유 아이디
             Debug.Log(player.Value.UserId); // 친구 기능, 귓속말 등등에 쓰이지만... 플젝때 알아서 써보기
         }
+        
+        // 방에 입장 완료가 되면 플레이어를 생성한다.
+        // 포톤에서는 게임 오브젝트 생성 후 포톤 서버에 등록까지 해야함.
+        PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity);
     }
     
     // 방 입장에 실패하면 호출되는 함수
