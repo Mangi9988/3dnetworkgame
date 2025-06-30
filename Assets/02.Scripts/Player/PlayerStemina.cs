@@ -72,10 +72,10 @@ public class PlayerStemina : PlayerAbility
         if (_isFatigued || _currentStamina < JumpStaminaCost)
         {
             CheckFatigue();
+            ConsumeStamina(JumpStaminaCost);
             return false;
         }
         
-        IsUsingStamina = true;
         ConsumeStamina(JumpStaminaCost);
         return true;
     }
@@ -85,6 +85,7 @@ public class PlayerStemina : PlayerAbility
         if (_isFatigued || _currentStamina < AttackStaminaCost)
         {
             CheckFatigue();
+            ConsumeStamina(AttackStaminaCost);
             return false;
         }
 

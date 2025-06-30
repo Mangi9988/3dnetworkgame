@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IDamaged
 {
     public PlayerStat Stat;
 
@@ -11,6 +12,13 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         _abilitiesCache = new Dictionary<Type, PlayerAbility>();
+    }
+
+    [PunRPC]
+    public void Damaged(float damage)
+    {
+        GetAbility<PlayerHealth>().TakeDamage(damage);
+        
     }
     
     public T GetAbility<T>() where T : PlayerAbility

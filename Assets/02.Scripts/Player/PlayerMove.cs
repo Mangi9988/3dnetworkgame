@@ -167,7 +167,7 @@ public class PlayerMove : PlayerAbility//, IPunObservable
                 _verticalVelocity = -2f;
             }
 
-            if (InputHandler.GetKeyDown(KeyCode.Space) && _jumpTimeoutDelta <= 0.0f)
+            if (InputHandler.GetKeyDown(KeyCode.Space) && _jumpTimeoutDelta <= 0.0f && _owner.GetAbility<PlayerStemina>().UseJumpStamina())
             {
                 _verticalVelocity = Mathf.Sqrt(_owner.Stat.JumpPower * -2f * Gravity);
                 _jumpTimeoutDelta = JumpTimeout;

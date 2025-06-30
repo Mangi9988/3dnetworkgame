@@ -19,7 +19,8 @@ public class UI_PlayerStat : MonoBehaviour
         {
             return;
         }
-
+        
+        HealthBarSlider.value = _player.Stat.Health / _player.Stat.MaxHealth;
         StaminaBarSlider.value = _player.GetAbility<PlayerStemina>().StaminaPercentage;
     }
 }
