@@ -1641,13 +1641,13 @@ MonoBehaviour:
     SynchronizeType: 1
     Name: LandBlend
   - Type: 9
-    SynchronizeType: 1
+    SynchronizeType: 0
     Name: Attack1
   - Type: 9
-    SynchronizeType: 1
+    SynchronizeType: 0
     Name: Attack2
   - Type: 9
-    SynchronizeType: 1
+    SynchronizeType: 0
     Name: Attack3
   m_SynchronizeLayers:
   - SynchronizeType: 1

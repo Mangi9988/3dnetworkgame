@@ -87,8 +87,7 @@ public class PlayerStemina : PlayerAbility
             CheckFatigue();
             return false;
         }
-        
-        IsUsingStamina = true;
+
         ConsumeStamina(AttackStaminaCost);
         return true;
     }

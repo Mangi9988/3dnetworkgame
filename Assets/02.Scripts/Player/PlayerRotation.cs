@@ -20,7 +20,13 @@ public class PlayerRotation : PlayerAbility
         if (_photonView.IsMine)
         {
             CinemachineCamera camera = GameObject.FindWithTag("FollowCamera").GetComponent<CinemachineCamera>();
-            camera.Follow = CameraTarget;   
+            camera.Follow = CameraTarget;
+            
+            UI_PlayerStat ui_PlayerStat = FindAnyObjectByType<UI_PlayerStat>();
+            ui_PlayerStat.SetPlayer(_owner);
+
+            MinimapCamera minimapCamera = FindAnyObjectByType<MinimapCamera>();
+            minimapCamera.Target = CameraTarget;
         }
     }
 

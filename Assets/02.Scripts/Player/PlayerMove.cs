@@ -110,17 +110,13 @@ public class PlayerMove : PlayerAbility//, IPunObservable
 
         if (rawX != 0f || rawZ != 0f)
         {
-            var stamina = _owner.GetAbility<PlayerStemina>();
-
-            if (isRunning && stamina.UseDashStamina())
+            if (isRunning && _owner.GetAbility<PlayerStemina>().UseDashStamina())
             {
-                // 대시 성공
                 targetSpeed = _owner.Stat.DashSpeed;
             }
             else
             {
-                // 대시 실패(피로/체력부족) 또는 Shift 미누름 → 일반 보행
-                stamina.IsUsingStamina = false;
+                _owner.GetAbility<PlayerStemina>().IsUsingStamina = false;
                 targetSpeed = _owner.Stat.MoveSpeed;
             }
         }
