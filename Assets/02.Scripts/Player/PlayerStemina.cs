@@ -16,13 +16,12 @@ public class PlayerStemina : PlayerAbility
     [Header("Debug Info")]
     private bool _isFatigued = false;
     
-    [SerializeField] private float _currentStamina = 0f;
     private float _fatigueTimer = 0f;
     public bool IsUsingStamina = false; // 스태미나 사용 중인지 체크
     
     private void Start()
     {
-        _currentStamina = _owner.Stat.MaxStamina;
+        _owner.Stat.Stamina = _owner.Stat.MaxStamina;
     }
 
     private void Update()
@@ -49,13 +48,13 @@ public class PlayerStemina : PlayerAbility
 
     public void ConsumeStamina(float amount)
     {
-        _currentStamina -= amount;
-        _currentStamina = Mathf.Max(_currentStamina, -1f);
+        _owner.Stat.Stamina -= amount;
+        _owner.Stat.Stamina = Mathf.Max(_owner.Stat.Stamina, -1f);
     }
 
     public bool UseDashStamina()
     {
-        if (_isFatigued || _currentStamina <= MinDashStamina)
+        if (_isFatigued || _owner.Stat.Stamina <= MinDashStamina)
         {
             CheckFatigue();
             return false;
@@ -69,7 +68,7 @@ public class PlayerStemina : PlayerAbility
 
     public bool UseJumpStamina()
     {
-        if (_isFatigued || _currentStamina < JumpStaminaCost)
+        if (_isFatigued || _owner.Stat.Stamina < JumpStaminaCost)
         {
             CheckFatigue();
             ConsumeStamina(JumpStaminaCost);
@@ -82,7 +81,7 @@ public class PlayerStemina : PlayerAbility
 
     public bool UseAttackStamina()
     {
-        if (_isFatigued || _currentStamina < AttackStaminaCost)
+        if (_isFatigued || _owner.Stat.Stamina < AttackStaminaCost)
         {
             CheckFatigue();
             ConsumeStamina(AttackStaminaCost);
@@ -97,7 +96,7 @@ public class PlayerStemina : PlayerAbility
     {
         if (!_isFatigued)
         {
-            _currentStamina = Mathf.Min(_currentStamina + amount, _owner.Stat.MaxStamina);
+            _owner.Stat.Stamina = Mathf.Min(_owner.Stat.Stamina + amount, _owner.Stat.MaxStamina);
         }
     }
 
@@ -112,6 +111,6 @@ public class PlayerStemina : PlayerAbility
     }
 
     // 외부에서 확인용 프로퍼티
-    public float CurrentStamina => _currentStamina;
-    public float StaminaPercentage => _currentStamina / _owner.Stat.MaxStamina;
+    public float CurrentStamina => _owner.Stat.Stamina;
+    public float StaminaPercentage => _owner.Stat.Stamina / _owner.Stat.MaxStamina;
 }

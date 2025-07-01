@@ -25,7 +25,7 @@ public class PlayerAttack : PlayerAbility
 
     private void Update()
     {
-        if (!_photonView.IsMine)
+        if (_photonView.IsMine == false || _owner.State == EPlayerState.Death)
         {
             return;
         }
@@ -95,7 +95,7 @@ public class PlayerAttack : PlayerAbility
         // RPC로 호출해야지 다른 사람의 게임 오브젝트들도 이 함수가 실행된다
         // damagedObject.Damaged(_owner.Stat.Damage);
         PhotonView otherPhotonView = other.GetComponent<PhotonView>();
-        otherPhotonView.RPC(nameof(Player.Damaged), RpcTarget.AllBuffered, _owner.Stat.Damage);
+        otherPhotonView.RPC(nameof(Player.Damaged), RpcTarget.All, _owner.Stat.Damage, _photonView.Owner.ActorNumber);
     }
     
     // RPC로 호출할 함수는 반드시 [PunRPC]를 호출해줘야 한다.

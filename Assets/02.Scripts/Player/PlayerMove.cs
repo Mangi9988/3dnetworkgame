@@ -65,6 +65,11 @@ public class PlayerMove : PlayerAbility//, IPunObservable
     
     private void Update()
     {
+        if (_owner.State == EPlayerState.Death)
+        {
+            return;
+        }
+        
         if (!_photonView.IsMine)
         {
             // transform.position = Vector3.Lerp(transform.position, _receivedPosition, Time.deltaTime * 20f);

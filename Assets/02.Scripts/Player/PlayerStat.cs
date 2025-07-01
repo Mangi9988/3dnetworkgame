@@ -13,5 +13,6 @@ public class PlayerStat
     public float AttackSpeed = 1.2f;
     public float Damage = 20f;
     public float MaxStamina = 100f;
+    public float Stamina = 100f;
     public float RecoverStaminaAmount = 20f;
 }

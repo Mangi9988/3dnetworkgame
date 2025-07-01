@@ -1520,11 +1520,11 @@ GameObject:
   - component: {fileID: 6199852930891326473}
   - component: {fileID: 5423225189961359623}
   - component: {fileID: 3242020111561838823}
-  - component: {fileID: 186195477738956352}
+  - component: {fileID: 2483505544776646512}
   - component: {fileID: 6647441894120246893}
-  - component: {fileID: 8047802841179610154}
   - component: {fileID: 3320303978622041133}
   - component: {fileID: 5861232591691264944}
+  - component: {fileID: 8738141524400127781}
   - component: {fileID: 6663615779965610857}
   - component: {fileID: 9162531665408174766}
   - component: {fileID: 7142317514993379306}
@@ -1628,8 +1628,9 @@ MonoBehaviour:
     AttackSpeed: 0.4
     Damage: 20
     MaxStamina: 100
+    Stamina: 100
     RecoverStaminaAmount: 20
---- !u!114 &186195477738956352
+--- !u!114 &2483505544776646512
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1663,21 +1664,7 @@ MonoBehaviour:
   AttackStaminaCost: 20
   MinDashStamina: 1
   FatigueDuration: 2
-  _currentStamina: 0
   IsUsingStamina: 0
---- !u!114 &8047802841179610154
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4711410610792072087}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 724ae2312d0bae743ad473f4389abc93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _animator: {fileID: 6199852930891326473}
 --- !u!114 &3320303978622041133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1706,6 +1693,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CameraTarget: {fileID: 3194134997892846534}
+--- !u!114 &8738141524400127781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4711410610792072087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daad1dbab95efde4fb2c434bd46eadde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Target: {fileID: 8424348931221936790}
+  Strength: 2
+  Duration: 1.2
 --- !u!114 &6663615779965610857
 MonoBehaviour:
   m_ObjectHideFlags: 0
