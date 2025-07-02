@@ -25,6 +25,8 @@ public class ItemObject : MonoBehaviourPun
             
             ApplyItemEffect(player);
             
+            Debug.Log(other.gameObject.name);
+            
             ItemObjectFactory.Instance.RequestDelete(photonView.ViewID);
         }
     }
@@ -38,11 +40,11 @@ public class ItemObject : MonoBehaviourPun
                 break;
 
             case EItemType.Health:
-                player.RecoverHealth(20f); // 예시: 체력 20 회복
+                player.RecoverHealth(20f);
                 break;
 
             case EItemType.Stamina:
-                player.RecoverStamina(15f); // 예시: 스태미나 15 회복
+                player.RecoverStamina(15f);
                 break;
 
             default:

@@ -12,6 +12,11 @@ public class Weapon : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (_playerAttack == null)
+        {
+            return;
+        }
+        
         // 자기 자신과 부딪혔다면 어무것도 안함
         if (other.transform == _playerAttack.transform)
         {

@@ -75,11 +75,6 @@ public class PhotonServerManager : MonoBehaviourPunCallbacks
             // 진짜 고유 아이디
             Debug.Log(player.Value.UserId); // 친구 기능, 귓속말 등등에 쓰이지만... 플젝때 알아서 써보기
         }
-        
-        // 방에 입장 완료가 되면 플레이어를 생성한다.
-        // 포톤에서는 게임 오브젝트 생성 후 포톤 서버에 등록까지 해야함.
-        Vector3 randomPosition = SpawnPoint.Instance.GetRandomSpawnPoint();
-        PhotonNetwork.Instantiate("Player", randomPosition, Quaternion.identity);
     }
     
     // 방 입장에 실패하면 호출되는 함수

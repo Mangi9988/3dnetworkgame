@@ -26,7 +26,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         // 1. 플레이어 생성
         GeneratePlayer();
-
+        
         // 2. 룸 설정
         SetRoom();
         

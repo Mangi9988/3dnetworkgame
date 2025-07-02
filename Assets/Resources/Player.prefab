@@ -1532,7 +1532,7 @@ GameObject:
   - component: {fileID: 4194161412754096974}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1630,6 +1630,7 @@ MonoBehaviour:
     MaxStamina: 100
     Stamina: 100
     RecoverStaminaAmount: 20
+  Score: 0
 --- !u!114 &2483505544776646512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1706,8 +1707,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Target: {fileID: 8424348931221936790}
-  Strength: 2
-  Duration: 1.2
+  Strength: 0.2
+  Duration: 0.6
 --- !u!114 &6663615779965610857
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -12,13 +12,6 @@ public class PlayerShakingAbility : PlayerAbility
     public float Strength;
     public float Duration;
 
-    private CinemachineVirtualCamera _virtualCamera;
-    
-    private void Start()
-    {
-        _virtualCamera = GetComponent<CinemachineVirtualCamera>();
-    }
-
     public void ShakeCamera(CinemachineVirtualCamera camera, float amplitude, float frequency, float duration)
     {
         var noise = camera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
@@ -59,8 +52,8 @@ public class PlayerShakingAbility : PlayerAbility
             
             // 흔들어 재낀다음
             Vector3 randomPosition = Random.insideUnitSphere.normalized * Strength;
-            randomPosition.y = startPosition.y;
-            Target.localPosition = randomPosition;
+            randomPosition.y = 0f;
+            Target.localPosition = startPosition + randomPosition;
             
             yield return null;
         }
