@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 
 public class Bear : MonoBehaviour, IDamaged
 {
@@ -9,7 +10,6 @@ public class Bear : MonoBehaviour, IDamaged
         Idle,
         RandomPatrol,
         Trace,
-        Return,
         Attack,
         Damaged,
         Die
@@ -21,8 +21,7 @@ public class Bear : MonoBehaviour, IDamaged
     [Header("범위")]
     public float FindDistance = 7f;   // 탐색 범위
     public float AttackDistance = 2f; // 공격 범위
-    public float ReturnDistance = 10f;// 복귀 범위
-    public float BackToReturnPositionDistance = 1.2f;
+    public float PartolPositionDistance = 1.2f;
     private Vector3 _lastPosition;
     private Vector3 _startPosition;
 
@@ -83,11 +82,6 @@ public class Bear : MonoBehaviour, IDamaged
             case EnemyState.Trace:
             {
                 Trace();
-                break;
-            }
-            case EnemyState.Return:
-            {
-                Return();
                 break;
             }
             case EnemyState.Attack:
@@ -154,7 +148,7 @@ public class Bear : MonoBehaviour, IDamaged
     private IEnumerator IdleWaitAndPatrol()
     {
         yield return new WaitForSeconds(IdleTime);
-
+        _idleCoroutine = null;
         Debug.Log("Idle -> RandomPatrol");
         CurrentState = EnemyState.RandomPatrol;
         _animator.SetTrigger("IdleToWalk");
@@ -183,7 +177,7 @@ public class Bear : MonoBehaviour, IDamaged
         _agent.SetDestination(_randomTarget);
 
         // 도착했으면 -> Idle
-        if (Vector3.Distance(transform.position, _randomTarget) <= BackToReturnPositionDistance)
+        if (Vector3.Distance(transform.position, _randomTarget) <= PartolPositionDistance)
         {
             Debug.Log("RandomPatrol -> Idle");
             _animator.SetTrigger("WalkToIdle");
@@ -213,12 +207,12 @@ public class Bear : MonoBehaviour, IDamaged
 
     private void Trace()
     {
-        // 전이 : 플레이어와 멀어지거나 복귀 지점과 멀어지면 -> Return
+        // 전이 : 플레이어와 멀어지거나 복귀 지점과 멀어지면 -> Idle
         if (Vector3.Distance(transform.position, Player.transform.position) >= FindDistance)
         {
-            Debug.Log("Trace -> Return");
+            Debug.Log("Trace -> Idle");
             _animator.SetTrigger("TraceToWalk");
-            CurrentState = EnemyState.Return;
+            CurrentState = EnemyState.Idle;
             return;
         }
         
@@ -233,32 +227,7 @@ public class Bear : MonoBehaviour, IDamaged
 
         _agent.SetDestination(Player.transform.position);
     }
-
-    private void Return()
-    {
-        // 전이 : 시작 위치와 가까워 지면 -> Idle
-        if (Vector3.Distance(transform.position, _lastPosition) <= BackToReturnPositionDistance)
-        {
-            Debug.Log("Return -> Idle");
-            _animator.SetTrigger("MoveToIdle");
-            transform.position = _lastPosition;
-            CurrentState = EnemyState.Idle;
-            return;
-        }
-        
-        // 전이 : 되돌아 가는 도중 적을 찾으면 다시 Trace
-        if (Vector3.Distance(transform.position, Player.transform.position) <= FindDistance &&
-            Vector3.Distance(_lastPosition, Player.transform.position) <= ReturnDistance)
-        {
-            Debug.Log("Return -> Trace");
-            _animator.SetTrigger("WalkToTrace");
-            CurrentState = EnemyState.Trace;
-            return;
-        }
-
-        _agent.SetDestination(_lastPosition);
-    }
-
+    
     public void Attack()
     {
         // 전이 : 공격 범위보다 멀어지면 -> Trace
@@ -299,6 +268,5 @@ public class Bear : MonoBehaviour, IDamaged
         yield return new WaitForSeconds(DieTime);
         Debug.Log("꾸엉");
         // _poolItem.ReturnToPoolAs<Enemy>();
-        // 죽는다
     }
 }
