@@ -42,7 +42,7 @@ public class ItemObject : MonoBehaviourPun
         switch (_itemType)
         {
             case EItemType.Score:
-                player.Score += 10;
+                ScoreManager.Instance.AddScore(100);
                 break;
 
             case EItemType.Health:

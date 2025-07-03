@@ -16,8 +16,6 @@ public class Player : MonoBehaviour, IDamaged
 {
     public PlayerStat Stat;
 
-    public int Score = 0;
-
     private Dictionary<Type, PlayerAbility> _abilitiesCache;
     
     private EPlayerState _state = EPlayerState.Live;

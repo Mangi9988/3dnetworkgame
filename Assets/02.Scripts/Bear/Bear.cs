@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
@@ -14,7 +15,7 @@ public class Bear : MonoBehaviour, IDamaged
         Damaged,
         Die
     }
-    public GameObject Player;
+    private Player _targetPlayer;
     private NavMeshAgent _agent;
     private Animator _animator;
     
@@ -23,7 +24,6 @@ public class Bear : MonoBehaviour, IDamaged
     public float AttackDistance = 2f; // 공격 범위
     public float PartolPositionDistance = 1.2f;
     private Vector3 _lastPosition;
-    private Vector3 _startPosition;
 
     [Header("공격")]
     public float AttackCooltime = 1.5f;
@@ -56,9 +56,7 @@ public class Bear : MonoBehaviour, IDamaged
         _animator = _animator = GetComponentInChildren<Animator>();
         _animator.applyRootMotion = false;
         
-        _startPosition = transform.position;
-        _lastPosition = _startPosition;
-        Player = GameObject.FindGameObjectWithTag("Player");
+        _lastPosition = transform.position;
     }
     
     // 2. 현재 상태를 지정한다
@@ -124,8 +122,12 @@ public class Bear : MonoBehaviour, IDamaged
     // 3. 상태 함수들을 구현한다
     private void Idle()
     {
+        var players = GameObject.FindGameObjectsWithTag("Player");
+        var searched = players.Where(p => Vector3.Distance(p.transform.position, transform.position) <= 5f).ToList();
+        _targetPlayer = searched[Random.Range(0, searched.Count())].GetComponent<Player>();
+        
         // 플레이어 감지를 먼저 체크
-        if (Vector3.Distance(transform.position, Player.transform.position) <= FindDistance)
+        if (Vector3.Distance(transform.position, _targetPlayer.transform.position) <= FindDistance)
         {
             if (_idleCoroutine != null)
             {
@@ -158,10 +160,12 @@ public class Bear : MonoBehaviour, IDamaged
     private void RandomPatrol()
     {
         // 플레이어 감지되면 Trace 상태로 전환
-        if (Vector3.Distance(transform.position, Player.transform.position) <= FindDistance)
+        if (Vector3.Distance(transform.position, _targetPlayer.transform.position) <= FindDistance)
         {
             Debug.Log("RandomPatrol -> Trace");
             _hasRandomTarget = false;
+            _agent.ResetPath();
+            _idleCoroutine = null;
             CurrentState = EnemyState.Trace;
             _animator.SetTrigger("WalkToTrace");
             return;
@@ -208,16 +212,19 @@ public class Bear : MonoBehaviour, IDamaged
     private void Trace()
     {
         // 전이 : 플레이어와 멀어지거나 복귀 지점과 멀어지면 -> Idle
-        if (Vector3.Distance(transform.position, Player.transform.position) >= FindDistance)
+        if (Vector3.Distance(transform.position, _targetPlayer.transform.position) >= FindDistance)
         {
             Debug.Log("Trace -> Idle");
-            _animator.SetTrigger("TraceToWalk");
+            _hasRandomTarget = false;
+            _agent.ResetPath();
+            _lastPosition = transform.position;
+            _animator.SetTrigger("TraceToIdle");
             CurrentState = EnemyState.Idle;
             return;
         }
         
         // 전이 : 공격 범위 만큼 가까워 지면 -> Attack
-        if (Vector3.Distance(transform.position, Player.transform.position) < AttackDistance)
+        if (Vector3.Distance(transform.position, _targetPlayer.transform.position) < AttackDistance)
         {
             Debug.Log("Trace -> Attack");
             _animator.SetTrigger("MoveToAttackDelay");
@@ -225,13 +232,13 @@ public class Bear : MonoBehaviour, IDamaged
             return;
         }
 
-        _agent.SetDestination(Player.transform.position);
+        _agent.SetDestination(_targetPlayer.transform.position);
     }
     
     public void Attack()
     {
         // 전이 : 공격 범위보다 멀어지면 -> Trace
-        if (Vector3.Distance(transform.position, Player.transform.position) >= AttackDistance)
+        if (Vector3.Distance(transform.position, _targetPlayer.transform.position) >= AttackDistance)
         {
             Debug.Log("Attack -> Trace");
             _animator.SetTrigger("AttackDelayToMove");
@@ -245,7 +252,7 @@ public class Bear : MonoBehaviour, IDamaged
         if (_attackCooltimer >= AttackCooltime)
         {
             _attackCooltimer = 0f;
-            _animator.SetTrigger($"AttackDelayToAttack{Random.Range(1, 3)}");
+            _animator.SetTrigger($"AttackDelayToAttack{Random.Range(1, 4)}");
         }
     }
 
@@ -258,6 +265,7 @@ public class Bear : MonoBehaviour, IDamaged
         Debug.Log("Damaged -> Trace");
         _animator.SetTrigger("AttackDelayToMove");
         CurrentState = EnemyState.Trace;
+        _agent.isStopped = false;
     }
 
     private IEnumerator Die_Coroutine()
