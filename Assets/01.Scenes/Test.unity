@@ -403055,7 +403055,7 @@ GameObject:
   - component: {fileID: 8780830254481644840}
   - component: {fileID: 8780830254481644839}
   m_Layer: 0
-  m_Name: Bear_4
+  m_Name: Bear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

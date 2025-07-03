@@ -69,7 +69,7 @@ public class Player : MonoBehaviour, IDamaged
 
     private void MakeItems(int count)
     {
-        MakePotion(Random.Range(1, 10));
+        MakePotion(Random.Range(0, 10));
         
         for (int i = 0; i < count; i++)
         {
@@ -84,11 +84,11 @@ public class Player : MonoBehaviour, IDamaged
 
     private void MakePotion(int randomNumber)
     {
-        if (randomNumber >= 1 && randomNumber <= 3)
+        if (randomNumber <= 2)
         {
             ItemObjectFactory.Instance.RequestCreate(EItemType.Stamina, transform.position);
         }
-        else if(randomNumber >= 4 && randomNumber <= 5)
+        else if(randomNumber <= 4)
         {
             ItemObjectFactory.Instance.RequestCreate(EItemType.Health, transform.position);
         }

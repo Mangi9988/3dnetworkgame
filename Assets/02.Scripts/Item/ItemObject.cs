@@ -1,6 +1,7 @@
 using System;
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public enum EItemType
 {
@@ -15,13 +16,18 @@ public enum EItemType
 [RequireComponent(typeof(Collider))]
 public class ItemObject : MonoBehaviourPun
 {
-    [SerializeField] private EItemType itemType;
+    [SerializeField] private EItemType _itemType;
+    public EItemType ItemType => _itemType;
     
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             Player player = other.GetComponent<Player>();
+            if (!player.GetComponent<PhotonView>().IsMine)
+            {
+                return;
+            }
             
             ApplyItemEffect(player);
             
@@ -33,7 +39,7 @@ public class ItemObject : MonoBehaviourPun
     
     private void ApplyItemEffect(Player player)
     {
-        switch (itemType)
+        switch (_itemType)
         {
             case EItemType.Score:
                 player.Score += 10;
@@ -48,7 +54,7 @@ public class ItemObject : MonoBehaviourPun
                 break;
 
             default:
-                Debug.LogWarning($"Unknown item type: {itemType}");
+                Debug.LogWarning($"Unknown item type: {_itemType}");
                 break;
         }
     }
