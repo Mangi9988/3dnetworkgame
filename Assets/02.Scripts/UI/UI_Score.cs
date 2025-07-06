@@ -33,10 +33,10 @@ public class UI_Score : MonoBehaviour
         }
         
         // 내 점수 등록
-        string myNickname = PhotonNetwork.NickName + "_" + PhotonNetwork.LocalPlayer.ActorNumber;
-        int index = sortedScores.FindIndex(x => x.Key == myNickname);
+        string myNickName = PhotonNetwork.NickName + "_" +  PhotonNetwork.LocalPlayer.ActorNumber;
+        Debug.Log(myNickName);
+        int index = sortedScores.FindIndex(x => x.Key == myNickName);
+        if (index < 0) return;
         MySlot.Set($"{index + 1}", sortedScores[index].Key, sortedScores[index].Value);
-        // FindIndex
-        // MySlot.Set();
     }
 }

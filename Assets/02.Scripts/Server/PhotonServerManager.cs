@@ -12,6 +12,22 @@ public class PhotonServerManager : MonoBehaviourPunCallbacks
     private readonly string _gameVersion = "1.0.0";
     private string _nickName = "Mangi";
     
+    private static PhotonServerManager _instance;
+    
+    private void Awake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+        
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+    
     // MonoBehaviourPunCallbacks : 유니티 이벤트 말고도 PUN 서버 이벤트를 받을 수 있다.
     private void Start()
     {
@@ -56,13 +72,13 @@ public class PhotonServerManager : MonoBehaviourPunCallbacks
         Debug.Log($"InLobby : {PhotonNetwork.InLobby}");
 
         // 랜덤 방에 들어간다.
-        PhotonNetwork.JoinRandomRoom();
+        // PhotonNetwork.JoinRandomRoom();
     }
     
     // 방에 입장한 후 호출되는 함수
     public override void OnJoinedRoom()
     {
-        Debug.Log($"방 입장 완료! : {PhotonNetwork.CurrentRoom.Name}");
+        /*Debug.Log($"방 입장 완료! : {PhotonNetwork.CurrentRoom.Name}");
         Debug.Log($"플레이어 : {PhotonNetwork.CurrentRoom.PlayerCount}명");
         
         // Room(방)에 접속한 사용자 정보
@@ -74,11 +90,20 @@ public class PhotonServerManager : MonoBehaviourPunCallbacks
             
             // 진짜 고유 아이디
             Debug.Log(player.Value.UserId); // 친구 기능, 귓속말 등등에 쓰이지만... 플젝때 알아서 써보기
+        }*/
+        
+        Debug.Log("룸 입장 완료!");
+        Debug.Log($"PhotonNetwork.InRoom = {PhotonNetwork.InRoom}");
+        Debug.Log($"Player Count = {PhotonNetwork.CurrentRoom.PlayerCount}");
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.LoadLevel("Battle");
         }
     }
     
     // 방 입장에 실패하면 호출되는 함수
-    public override void OnJoinRandomFailed(short returnCode, string message)
+    /* public override void OnJoinRandomFailed(short returnCode, string message)
     {
         Debug.Log($"랜덤 방 입장에 실패했습니다 : {returnCode} : {message}");
         
@@ -90,7 +115,7 @@ public class PhotonServerManager : MonoBehaviourPunCallbacks
         
         // Room 생성
         PhotonNetwork.CreateRoom("TestRoom", roomOptions);
-    }
+    } */
 
     // Room(방) 생성에 실패했을 때 호출되는 함수
     public override void OnCreateRoomFailed(short returnCode, string message)

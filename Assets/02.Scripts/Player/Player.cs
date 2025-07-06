@@ -55,7 +55,9 @@ public class Player : MonoBehaviour, IDamaged
 
             if (_photonView.IsMine)
             {
-                MakeItems(Random.Range(1, 3));
+                var actorPlayer = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber);
+                _photonView.RPC(nameof(RequestAddKillCount), actorPlayer);
+                MakeItems(Random.Range(1, 4));
             }
         }
         else
@@ -65,6 +67,12 @@ public class Player : MonoBehaviour, IDamaged
         }
     }
 
+    [PunRPC]
+    public void RequestAddKillCount()
+    {
+        ScoreManager.Instance.AddKillCount();
+    }
+    
     private void MakeItems(int count)
     {
         MakePotion(Random.Range(0, 10));

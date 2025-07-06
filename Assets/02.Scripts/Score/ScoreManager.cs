@@ -8,7 +8,7 @@ using UnityEngine;
 public class ScoreManager : MonoBehaviourPunCallbacks
 {
     public static ScoreManager Instance { get; private set; }
-
+    
     private void Awake()
     {
         Instance = this;
@@ -16,6 +16,8 @@ public class ScoreManager : MonoBehaviourPunCallbacks
     
     private int _score = 0;
     public int Score => _score;
+    
+    private int _killCount = 0;
     
     private Dictionary<string, int> _scores = new Dictionary<string, int>();
 
@@ -26,16 +28,22 @@ public class ScoreManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         // 방에 들어가면 '네 점수가 0이다' 라는 내용으로 커스텀 프로퍼티를 초기화 해준다.
-        RefreshScore();
+        Refresh();
     }
     
-    private void RefreshScore()
+    private void Refresh()
     {
         // 최초 등록
         Hashtable hashtable = new Hashtable();
-        hashtable.Add("Score", _score);
+        hashtable.Add("Score", _killCount * 5000 + _score);
         
         PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
+    }
+
+    public void AddKillCount()
+    {
+        _killCount += 1;
+        Refresh();
     }
     
     public void AddScore(int addScore)
@@ -43,7 +51,7 @@ public class ScoreManager : MonoBehaviourPunCallbacks
         _score += addScore;
         
         // 프로퍼티 벨류 수정
-        RefreshScore();
+        Refresh();
     }
 
     // 플레이어의 커스텀 프로퍼티가 변경되면 호출되는 콜백 함수

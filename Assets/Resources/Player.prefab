@@ -1630,7 +1630,6 @@ MonoBehaviour:
     MaxStamina: 100
     Stamina: 100
     RecoverStaminaAmount: 20
-  Score: 0
 --- !u!114 &2483505544776646512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1752,10 +1751,11 @@ MonoBehaviour:
   prefixField: -1
   Synchronization: 2
   OwnershipTransfer: 0
-  observableSearch: 2
+  observableSearch: 1
   ObservedComponents:
   - {fileID: 6465180008337008834}
   - {fileID: 4194161412754096974}
+  - {fileID: 7289679630407997982}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -1766,7 +1766,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4711410610792072087}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
@@ -1820,9 +1820,6 @@ MonoBehaviour:
   - Type: 9
     SynchronizeType: 0
     Name: Damaged
-  - Type: 9
-    SynchronizeType: 0
-    Name: Dead
   - Type: 1
     SynchronizeType: 1
     Name: LandBlend
@@ -1835,6 +1832,9 @@ MonoBehaviour:
   - Type: 9
     SynchronizeType: 0
     Name: Attack3
+  - Type: 9
+    SynchronizeType: 0
+    Name: Death
   m_SynchronizeLayers:
   - SynchronizeType: 1
     LayerIndex: 0
@@ -3495,6 +3495,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4339345282241284766}
   - component: {fileID: 5364943923963583079}
+  - component: {fileID: 7556581615479598013}
   m_Layer: 0
   m_Name: Health Slider
   m_TagString: Untagged
@@ -3574,6 +3575,19 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7556581615479598013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9179901765334619916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 209795fb39153264eb84b38154bf7d09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HealthBarSlider: {fileID: 5364943923963583079}
 --- !u!1001 &333484920226816117
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3640,6 +3654,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5610884078883986163, guid: 9fbe61d1f4bc091439f25f985dd189a5, type: 3}
       insertIndex: -1
       addedObject: {fileID: 9020821811867567336}
+    - targetCorrespondingSourceObject: {fileID: 5610884078883986163, guid: 9fbe61d1f4bc091439f25f985dd189a5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7289679630407997982}
   m_SourcePrefab: {fileID: 100100000, guid: 9fbe61d1f4bc091439f25f985dd189a5, type: 3}
 --- !u!4 &4771224329766019132 stripped
 Transform:
@@ -3684,6 +3701,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 589b437f52dbff64d8731c4d732011c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7289679630407997982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5295419055800842886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 0
+  m_SynchronizeRotation: 0
+  m_SynchronizeScale: 1
+  m_UseLocal: 1
 --- !u!1001 &3146496263189910991
 PrefabInstance:
   m_ObjectHideFlags: 0

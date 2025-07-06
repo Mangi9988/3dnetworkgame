@@ -11,6 +11,6 @@ public class UI_ScoreSlot : MonoBehaviour
     {
         RankTextUI.text = rank;
         NicknameTextUI.text = nickname;
-        ScoreTextUI.text = score.ToString();
+        ScoreTextUI.text = score.ToString("N0");
     }
 }
