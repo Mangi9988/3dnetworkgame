@@ -3,11 +3,40 @@ using Photon.Realtime;
 using TMPro;
 using UnityEngine;
 
+public enum ECharacterType
+{
+    Male,
+    Female
+}
+
 public class LobbyScene : MonoBehaviour
 {
     public TMP_InputField NickinameInputField;
     public TMP_InputField RoomNameInputField;
 
+    public static ECharacterType CharacterType = ECharacterType.Male;
+    public GameObject MaleCharacter;
+    public GameObject FemaleCharacter;
+
+    public void OnClickMaleCharacter() => OnClickCharacterTypeButton(ECharacterType.Male);
+    public void OnClickFemaleCharacter() => OnClickCharacterTypeButton(ECharacterType.Female);
+    public void OnClickCharacterTypeButton(ECharacterType characterType)
+    {
+        // 파라미터(매개변수) vs 인자
+        // parameter vs argument
+        
+        CharacterType = characterType;
+        
+        MaleCharacter.SetActive(characterType == ECharacterType.Male);
+        FemaleCharacter.SetActive(characterType == ECharacterType.Female);
+    }
+    
+    private void Start()
+    {
+        OnClickMaleCharacter();
+    }
+
+    
     // 방 만들기 함수를 호출
     public void OnClickMakeRoomButton()
     {

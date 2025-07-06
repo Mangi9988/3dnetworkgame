@@ -7,7 +7,7 @@ public class PlayerNickName : PlayerAbility
 
     private void Start()
     {
-        NicknameTextUI.text = $"{_photonView.Owner.NickName}_{_photonView.Owner.ActorNumber}";
+        NicknameTextUI.text = $"{_photonView.Owner.NickName}";
 
         if (_photonView.IsMine)
         {

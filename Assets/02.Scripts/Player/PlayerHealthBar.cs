@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
-public class PlayerHealthBar : PlayerAbility
+public class PlayerHealthBar : PlayerAbility, IPunObservable
 {
     public Slider HealthBarSlider;
 

@@ -22,17 +22,38 @@ public class RoomManager : MonoBehaviourPunCallbacks
     }
     
     // 내가 방에 입장하면 자동으로 호출되는 함수
+    bool _initialized = false;
     public override void OnJoinedRoom()
     {
+        Init();
+    }
+
+    private void Start()
+    {
+        if (PhotonNetwork.InRoom)
+        {
+            Init();
+        }
+    }
+    
+    private void Init()
+    {
+        if (_initialized)
+        {
+            return;
+        }
+        
+        _initialized = true;
+        
         // 1. 플레이어 생성
         GeneratePlayer();
-        
+
         // 2. 룸 설정
         SetRoom();
         
         OnRoomDataChanged?.Invoke();
     }
-
+    
     // 새로운 플레이어가 방에 입장하면 자동으로 호출되는 함수
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
@@ -65,7 +86,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         // 방에 입장 완료가되면 플레이어를 생성한다.
         // 포톤에서는 게임 오브젝트 생성후 포톤 서버에 등록까지해야 한다.
         Vector3 randomPosition = SpawnPoint.Instance.GetRandomSpawnPoint();
-        PhotonNetwork.Instantiate("Player", randomPosition, Quaternion.identity);
+        PhotonNetwork.Instantiate($"{LobbyScene.CharacterType}_Player", randomPosition, Quaternion.identity);
     }
 
     private void SetRoom()
