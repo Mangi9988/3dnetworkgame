@@ -5,11 +5,11 @@ using Photon.Realtime;
 
 public class UI_RoomList : MonoBehaviourPunCallbacks
 {
-    public List<UI_Room> UIRooms;
+    public List<UI_RoomSlot> UIRooms;
   
     private void Start()
     {
-        foreach (UI_Room uiRoom in UIRooms)
+        foreach (UI_RoomSlot uiRoom in UIRooms)
         {
             uiRoom.gameObject.SetActive(false);
         }
@@ -31,7 +31,7 @@ public class UI_RoomList : MonoBehaviourPunCallbacks
             Debug.Log($"{roomInfo.Name}_({roomInfo.PlayerCount}/{roomInfo.MaxPlayers})");
       
             UIRooms[index].gameObject.SetActive(true);
-            UIRooms[index].Init(roomInfo);
+            UIRooms[index].Refresh(roomInfo);
 
             index++;
         }

@@ -1,28 +1,34 @@
-using Photon.Pun;
-using Photon.Realtime;
-using TMPro;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class UI_Room : MonoBehaviour
 {
-    public TextMeshProUGUI RoomNameText;
-    public TextMeshProUGUI MasterNameText;
-    public TextMeshProUGUI PlayerCountText;
+    public List<UI_RoomSlot> UIRoomSlotList;
     
-    private RoomInfo _roomInfo;
-    
-    public void Init(RoomInfo roomInfo)
+    private void Start()
     {
-        _roomInfo = roomInfo;
+        LobbyScene.Instance.OnDataChanged += Refresh;
 
-        RoomNameText.text    = roomInfo.Name;
-        MasterNameText.text  = string.Empty;
-        PlayerCountText.text = $"({roomInfo.PlayerCount}/{roomInfo.MaxPlayers})";
+        Refresh();
     }
-    
-    public void OnClickRoom()
+
+    private void Refresh()
     {
-        PhotonNetwork.JoinRoom(_roomInfo.Name);
+        var roomList = LobbyScene.Instance.RoomList;
+
+        int slotCount = UIRoomSlotList.Count;
+
+        for (int i = 0; i < slotCount; ++i)
+        {
+            if (i >= roomList.Count)
+            {
+                UIRoomSlotList[i].gameObject.SetActive(false);
+            }
+            else
+            {
+                UIRoomSlotList[i].gameObject.SetActive(true);
+                UIRoomSlotList[i].Refresh(roomList[i]);
+            }
+        }
     }
 }
